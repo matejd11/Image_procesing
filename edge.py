@@ -29,9 +29,16 @@ def getValue(size, pixels, j, i, grid, div):
     sum[0] = abs(int(sum[0]))
     sum[1] = abs(int(sum[1]))
     sum[2] = abs(int(sum[2]))
+
+    d = int((sum[0] + sum[1] + sum[2]) / 3)
+
+    sum[0] = d
+    sum[1] = d
+    sum[2] = d
+
     return sum
 
-def main(inputFile = "a", outputFile = "a2", data = 1):
+def main(inputFile = "skuska", outputFile = "skuska3", data = 1):
     im = Image.open(inputFile + '.png', 'r')
     pix_val = im.load()
 
@@ -67,7 +74,7 @@ def main(inputFile = "a", outputFile = "a2", data = 1):
             b = int(sqrt(newDataHor[i][j][1]**2 + newDataVer[i][j][1]**2))
             c = int(sqrt(newDataHor[i][j][2]**2 + newDataVer[i][j][2]**2))
             if a+b+c != 0:
-                d = int((sqrt((255*3)**2*2)*3)/(a+b+c))
+                d = int((a+b+c)/3)
             else:
                 d = int(0)
             newData[i][j] = [d, d, d]
