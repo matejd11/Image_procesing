@@ -78,7 +78,7 @@ def loadImage(name):
     pix_val = im.load()
     return im, pix_val
 
-def saveImage(data, size, name, grid):
+def saveImage(data, size, name):
     newData = []
     for x in range(len(data)):
         newData += [tuple(pixel) for pixel in data[x]]
@@ -93,7 +93,7 @@ def main(inputFile = "input", outputFile = "output", filter = "box", dataA = 1, 
 
     newData = applyBlure(pix_val, im.size, window)
 
-    saveImage(newData, im.size, outputFile, window)
+    saveImage(newData, im.size, outputFile)
 
 if __name__ == '__main__':
     if len(sys.argv) == 6:
