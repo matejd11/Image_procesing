@@ -4,6 +4,17 @@ import sys
 from PIL import Image
 from math import *
 
+def getWindow(filter, dataA, dataB):
+    if "inversegaussian" in filter:
+        return inverseGaussianBlure(dataA, dataB)
+    elif "gaussian" in filter:
+        return gaussianBlure(dataA, dataB)
+    elif "box" in filter:
+        return boxBlure(dataA)
+    else:
+        print("unknown type of blure. exiting...")
+        return
+
 def boxBlure(size):
     size *= 2
     size += 1
@@ -55,28 +66,34 @@ def getaverage(size, pixels, j, i, grid):
             sum[x] = 0
     return sum
 
-def main(inputFile = "input", outputFile = "output", filter = "box", dataA = 5, dataB = 1):
-    im = Image.open(inputFile + '.png', 'r')
+def applyBlure(data, size, grid):
+    newData = [[0.0 for x in range(size[0])] for x in range(size[1])]
+    for i in range(size[1]):
+        for j in range(size[0]):
+            newData[i][j] = getaverage(size, data, i, j, grid)
+    return newData
+
+def loadImage(name):
+    im = Image.open(name + '.png', 'r')
     pix_val = im.load()
-    if "inversegaussian" in filter:
-        grid = inverseGaussianBlure(dataA, dataB)
-    elif "gaussian" in filter:
-        grid = gaussianBlure(dataA, dataB)
-    elif "box" in filter:
-        grid = boxBlure(dataA)
-    else:
-        print("error")
-        return
-    newData = [[0.0 for x in range(im.size[0])] for x in range(im.size[1])]
-    for i in range(im.size[1]):
-        for j in range(im.size[0]):
-            newData[i][j] = getaverage(im.size, pix_val, i, j, grid)
-    newConvertedData = []
-    for x in range(len(newData)):
-        newConvertedData += [tuple(pixel) for pixel in newData[x]]
-    new = Image.new('RGB', im.size)
-    new.putdata(newConvertedData)
-    new.save(outputFile + '.png', 'PNG')
+    return im, pix_val
+
+def saveImage(data, size, name, grid):
+    newData = []
+    for x in range(len(data)):
+        newData += [tuple(pixel) for pixel in data[x]]
+    new = Image.new('RGB', size)
+    new.putdata(newData)
+    new.save(name + '.png', 'PNG')    
+
+def main(inputFile = "input", outputFile = "output", filter = "box", dataA = 1, dataB = 1):
+    im, pix_val = loadImage(inputFile)
+
+    window = getWindow(filter, dataA, dataB)
+
+    newData = applyBlure(pix_val, im.size, window)
+
+    saveImage(newData, im.size, outputFile, window)
 
 if __name__ == '__main__':
     if len(sys.argv) == 6:
